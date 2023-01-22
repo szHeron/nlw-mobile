@@ -29,7 +29,7 @@ export function Habit(){
                 <Text className="text-white font-extrabold text-3xl">
                     {dayAndMonth}
                 </Text>
-                <ProgressBar progress={50}/>
+                <ProgressBar progress={30}/>
                 <View className="mt-6">
                     <Check title="Flexao" checked/>
                     <Check title="Beber agua" />

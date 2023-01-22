@@ -1,21 +1,40 @@
 import { useState } from "react"
-import { View, ScrollView, Text, TextInput, TouchableOpacity } from "react-native"
+import { View, ScrollView, Text, TextInput, TouchableOpacity, Alert } from "react-native"
 import Feather from '@expo/vector-icons/Feather';
 import colors from 'tailwindcss/colors'
 import { BackButton } from "../components/BackButton"
 import { Check } from "../components/Check"
+import { api } from "../lib/axios";
 
 export function New(){
+    const [title, setTitle] = useState('')
     const [weekDays, setWeekDays] = useState<number[]>([])
     const availableWeekDays = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sabado"]
 
     function handleToggleWeekDays(weekDayIndex: number){
-        console.log('eae')
         if(weekDays.includes(weekDayIndex)){
             setWeekDays(prevState => prevState.filter((weekDay)=> weekDay !== weekDayIndex))
         }else{
             setWeekDays(prevState => [...prevState, weekDayIndex])
         }
+    }
+
+    async function createNewHabit(){
+        if(!title || weekDays.length === 0){
+            return 
+        }
+
+        try{
+            await api.post('/habits',{
+                title,
+                weekDays
+            })
+            Alert.alert('habito criado com sucesso')
+        }catch(e){
+            Alert.alert('habito nao criado')
+        }
+        setTitle('')
+        setWeekDays([])
     }
 
     return (
@@ -35,6 +54,7 @@ export function New(){
                     className="h-12 pl-4 rounded-lg mt-3 bg-zinc-800 text-white focus:border-2 focus:border-green-600"
                     placeholder="Exercicios, dormir bem e etc..."
                     placeholderTextColor={colors.zinc[400]}
+                    onChangeText={setTitle}
                 />
                 <Text className="mt-4 mb-3 text-white font-semibold text-base">
                     Qual a recorrencia?
@@ -49,7 +69,7 @@ export function New(){
                                 />
                     })
                 }
-                <TouchableOpacity className="w-full h-14 flex-row items-center justify-center bg-green-600 rounded-md mt-6" activeOpacity={0.7}>
+                <TouchableOpacity onPress={createNewHabit} className="w-full h-14 flex-row items-center justify-center bg-green-600 rounded-md mt-6" activeOpacity={0.7}>
                     <Feather
                         name="check"
                         size={20}
